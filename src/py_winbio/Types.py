@@ -17,3 +17,14 @@ class WINBIO_UNIT_SCHEMA(ctypes.Structure):
                 ("Model", ctypes.c_char_p),
                 ("SerialNumber", ctypes.c_char_p),
                 ("FirmwareVersion", WINBIO_VERSION)]
+
+class Result():
+    def __init__(self, state, response):
+        self.state = state
+        self.response = response
+
+    def getStatus(self):
+        return self.state
+    
+    def getResponse(self):
+        return self.response

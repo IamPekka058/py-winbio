@@ -1,13 +1,13 @@
 # py-winbio
  
-Python wrapper for the WINBIO API from Windows. You can use py-winbio for biometric authentications supported by Windows.
+Python wrapper for the WINBIO API of Windows. You can use py-winbio for biometric authentications supported by Windows.
  
 ### IMPORTANT NOTE
-#### **This library only works with Windows.**
+#### **This library only works with/on Windows.**
 
 *For biometric authentication on macOS use [Touch ID by lukaskollmer](https://github.com/lukaskollmer/python-touch-id/)*
 #### Requirements
-Windows 7 or higher
+Windows 7 or later
  
 ## Getting started
 First, you have to install the ``` py-winbio ``` library.

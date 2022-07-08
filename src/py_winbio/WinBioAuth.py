@@ -17,8 +17,6 @@ class WinBioAuthenticator():
     def WinBioOpenSession(self, WINBIO_TYPE = Enum.WINBIO_TYPE.FINGERPRINT, WINBIO_POOL = Enum.WINBIO_POOL.SYSTEM, WINBIO_FLAG = Enum.WINBIO_FLAG.DEFAULT):
         ret = self.lib.WinBioOpenSession(WINBIO_TYPE, WINBIO_POOL, WINBIO_FLAG, None, 0, None, self.session_handle_ptr)
         if(FAILED(ret)[0]):
-            print("Open Failed!")
-            print(FAILED(ret)[1])
             return False
         return True
 
