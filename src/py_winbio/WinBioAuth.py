@@ -52,5 +52,16 @@ class WinBioAuthenticator():
         self.availableBiometricUnits = schema_ptr[0]
         return Types.Result(True, size_ptr[0])
 
+    def enumerateBiometricUnits(self, WINBIO_TYPE = Enum.WINBIO_TYPE.FINGERPRINT):
+        schema_ptr = ctypes.pointer(Types.WINBIO_UNIT_SCHEMA())
+        size = ctypes.c_int32()
+        size_ptr = ctypes.pointer(size)
+        ret = self.lib.WinBioEnumBiometricUnits(WINBIO_TYPE, schema_ptr, size_ptr)
+        if(FAILED(ret)[0]):
+            return -1
+        self.availableBiometricUnits = schema_ptr[0]
+        return size_ptr[0]
+
+
 
     
