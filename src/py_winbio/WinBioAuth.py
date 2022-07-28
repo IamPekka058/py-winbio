@@ -38,6 +38,20 @@ class WinBioAuthenticator():
         self.identity = identity_ptr[0]
         return Types.Result(True, self.identity)
 
+    def verify(self, subtype = Enum.WINBIO_FINGER_UNSPECIFIED.POS_01):
+        identity_ptr = ctypes.pointer(self.identity)
+        #subtype_ptr = ctypes.pointer(ctypes.c_ubyte(subtype))
+        unitId_ptr = ctypes.pointer(ctypes.c_int32())
+        reject_detail_ptr = ctypes.pointer(ctypes.c_ulong())
+        match_ptr = ctypes.pointer(ctypes.c_bool())
+
+        ret = self.lib.WinBioVerify(self.session_handle_ptr[0], subtype, identity_ptr, unitId_ptr, match_ptr, reject_detail_ptr)
+
+        failed = FAILED(ret)
+        if(failed[0]):
+            return Types.Result(False, failed[1])
+        return Types.Result(True, self.failed[1])
+
     def enumerateBiometricUnits(self, WINBIO_TYPE = Enum.WINBIO_TYPE.FINGERPRINT):
         schema_ptr = ctypes.pointer(Types.WINBIO_UNIT_SCHEMA())
         size = ctypes.c_int32()
@@ -48,19 +62,30 @@ class WinBioAuthenticator():
         #Check if operation failed
         failed = FAILED(ret)
         if(failed[0]):
-            return Types.Result(-1, failed[1])
+            self.free(schema_ptr)
+            return Types.Result(False, failed[1])
         self.availableBiometricUnits = schema_ptr[0]
+        self.free(schema_ptr)
         return Types.Result(True, size_ptr[0])
 
-    def enumerateBiometricUnits(self, WINBIO_TYPE = Enum.WINBIO_TYPE.FINGERPRINT):
-        schema_ptr = ctypes.pointer(Types.WINBIO_UNIT_SCHEMA())
-        size = ctypes.c_int32()
-        size_ptr = ctypes.pointer(size)
-        ret = self.lib.WinBioEnumBiometricUnits(WINBIO_TYPE, schema_ptr, size_ptr)
-        if(FAILED(ret)[0]):
-            return -1
-        self.availableBiometricUnits = schema_ptr[0]
-        return size_ptr[0]
+    def cancel(self):
+        ret = self.lib.WinBioCancel(self.session_handle_ptr[0])
+
+        failed = FAILED(ret)
+        if(failed[0]):
+            return Types.Result(False, failed[1])
+        return Types.Result(True, failed[1])
+
+    def free(self, address):
+        ret = self.lib.WinBioFree(address)
+
+        failed = FAILED(ret)
+        if(failed[0]):
+            return Types.Result(False, failed[1])
+        return Types.Result(True, failed[1])
+
+
+
 
 
 

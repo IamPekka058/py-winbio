@@ -1,5 +1,5 @@
 import ctypes
-import Enum
+import Enum, Types
 
 def convert(hresult):
     return ctypes.c_int32(hresult).value
