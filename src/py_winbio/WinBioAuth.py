@@ -62,10 +62,8 @@ class WinBioAuthenticator():
         #Check if operation failed
         failed = FAILED(ret)
         if(failed[0]):
-            self.free(schema_ptr)
             return Types.Result(False, failed[1])
         self.availableBiometricUnits = schema_ptr[0]
-        self.free(schema_ptr)
         return Types.Result(True, size_ptr[0])
 
     def cancel(self):
