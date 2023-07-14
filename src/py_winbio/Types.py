@@ -5,13 +5,14 @@ from ctypes import wintypes
 SECURITY_MAX_SID_SIZE = 68
 
 class GUID(ctypes.Structure):
-    _fields_ = [("Data1", wintypes.DWORD),
-                ("Data2", wintypes.DWORD),
-                ("Data3", wintypes.DWORD)]
+    _fields_ = [("Data1", ctypes.c_ulong),
+                ("Data2", ctypes.c_short),
+                ("Data3", ctypes.c_short),
+                ("Data4", ctypes.c_char * 8)]
 
 class AccountSid(ctypes.Structure):
     _fields_ = [("Size", ctypes.c_ulong),
-                ("Data", ctypes.c_char * SECURITY_MAX_SID_SIZE)]
+                ("Data", (ctypes.c_char * SECURITY_MAX_SID_SIZE))]
 
 class Value(ctypes.Structure):
     _fields_ = [("Null", ctypes.c_ulong),
@@ -37,9 +38,9 @@ class WINBIO_UNIT_SCHEMA(ctypes.Structure):
                 ("FirmwareVersion", WINBIO_VERSION)]
 
 class WINBIO_IDENTITY(ctypes.Structure):
-    _fields_ = [("Type", ctypes.c_ulong),
+    _fields_ = [("Type", ctypes.c_uint32),
                 ("Value", Value)]
-
+    
 class Result():
     def __init__(self, state, response):
         self.state = state
