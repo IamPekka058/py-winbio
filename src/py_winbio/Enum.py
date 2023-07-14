@@ -63,3 +63,8 @@ class WINBIO_FINGER_UNSPECIFIED():
     POS_08 = 0xFC
     POS_09 = 0xFD
     POS_10 = 0xFE
+
+class WINBIO_DB():
+    DEFAULT = 1
+    BOOTSTRAP = 2
+    ONCHIP = 3
