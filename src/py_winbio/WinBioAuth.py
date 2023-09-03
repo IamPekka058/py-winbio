@@ -1,15 +1,17 @@
 import ctypes, Enum, Types
+from ctypes import wintypes
 from Helper import FAILED
 
 class WinBioAuthenticator():
+    
     def __init__(self, lib_path = r"C:\Windows\System32\winbio.dll", openSession = True):
         # Setting lib
-        self.lib = ctypes.CDLL(lib_path)
+        self.lib = ctypes.WinDLL(lib_path)
         
         # Init variables
         self.identity = Types.WINBIO_IDENTITY()
-        session_handle = ctypes.c_uint32()
-        self.session_handle_ptr = ctypes.pointer(session_handle)
+        self.session_handle = wintypes.HANDLE()
+        #self.session_handle_ptr = ctypes.pointer(session_handle)
         if(openSession == False):
             return None
         
@@ -17,10 +19,10 @@ class WinBioAuthenticator():
         self.openSession()
     
     def openSession(self, WINBIO_TYPE = Enum.WINBIO_TYPE.FINGERPRINT, WINBIO_POOL = Enum.WINBIO_POOL.SYSTEM, WINBIO_FLAG = Enum.WINBIO_FLAG.DEFAULT):
-        print("OpenSession (Session Handle) -> {}".format(self.session_handle_ptr.contents))
-        ret = self.lib.WinBioOpenSession(WINBIO_TYPE, WINBIO_POOL, WINBIO_FLAG, ctypes.c_void_p(None), 0, Enum.WINBIO_DB.DEFAULT, self.session_handle_ptr)
+        #print("OpenSession (Session Handle) -> {}".format(self.session_handle_ptr.contents))
+        ret = self.lib.WinBioOpenSession(WINBIO_TYPE, WINBIO_POOL, WINBIO_FLAG, ctypes.c_void_p(None), 0, Enum.WINBIO_DB.DEFAULT, ctypes.byref(self.session_handle))
         print("OpenSession (Return) -> {}".format(ret))
-        print("OpenSession (Session Handle) -> {}".format(self.session_handle_ptr.contents))
+        print("OpenSession (Session Handle) -> {}".format(self.session_handle))
         #Check if operation failed
         failed = FAILED(ret)
         print("OpenSession -> {}".format(failed))
@@ -29,8 +31,10 @@ class WinBioAuthenticator():
         return Types.Result(True, "Success.")
     
     def locateSensor(self):
-        self.unit_id = ctypes.c_ulong()
-        ret = self.lib.WinBioLocateSensor(self.session_handle_ptr.contents, ctypes.byref(self.unit_id))
+        self.unit_id = wintypes.ULONG()
+        print("Wird aufgerufen...")
+        ret = self.lib.WinBioLocateSensor(self.session_handle, ctypes.byref(self.unit_id))
+        print("Aufgerufen...")
         failed = FAILED(ret)
         if(failed):
             print("locateSensor (Error) -> {}".format(failed))
@@ -74,9 +78,12 @@ class WinBioAuthenticator():
         schema_ptr = ctypes.pointer(Types.WINBIO_UNIT_SCHEMA())
         size = ctypes.c_int32()
         size_ptr = ctypes.pointer(size)
-        
-        ret = self.lib.WinBioEnumBiometricUnits(WINBIO_TYPE, schema_ptr, size_ptr)
+        schema_ptr_ptr = ctypes.pointer(schema_ptr)
+        ret = self.lib.WinBioEnumBiometricUnits(WINBIO_TYPE, schema_ptr_ptr, size_ptr)
+        print(size_ptr.contents)
+        self.unit_id = schema_ptr.contents.UnitId
         #Check if operation failed
+        self.free(schema_ptr_ptr.contents)
         failed = FAILED(ret)
         if(failed[0]):
             return Types.Result(False, failed[1])
@@ -98,6 +105,41 @@ class WinBioAuthenticator():
         if(failed[0]):
             return Types.Result(False, failed[1])
         return Types.Result(True, failed[1])
+    
+    def acquireFocus(self):
+        ret = self.lib.WinBioAcquireFocus()
+        
+        failed = FAILED(ret)
+        if(failed[0]):
+            return Types.Result(False, failed[1])
+        return Types.Result(True, failed[1])
+    
+    def releaseFocus(self):
+        ret = self.lib.WinBioRealeaseFocus()
+        
+        failed = FAILED(ret)
+        if(failed[0]):
+            return Types.Result(False, failed[1])
+        return Types.Result(True, failed[1])
+    
+    def enrollBegin(self, subfactor = Enum.SUBFACTOR.WINBIO_ANSI_381_POS_LH_INDEX_FINGER):
+        ret = self.lib.WinBioEnrollBegin(self.session_handle, self.unit_id)
+
+        failed = FAILED(ret)
+        if(failed[0]):
+            return Types.Result(False, failed[1])
+        return Types.Result(True, failed[1])
+
+    def enrollCapture(self):
+        rejectDetail = ctypes.c_ulong()
+        ret = self.lib.WinBioEnrollCapture(self.session_handle, ctypes.byref(rejectDetail))
+        print(ret)
+        print(rejectDetail)
+        failed = FAILED(ret)
+        if(failed[0]):
+            return Types.Result(False, failed[1])
+        return Types.Result(True, failed[1])
+
 
 
 
