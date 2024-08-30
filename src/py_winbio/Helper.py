@@ -38,4 +38,4 @@ def RESULT(hr):
     if hr == convert(Enum.HRESULT.S_OK):
         return Types.Result(True, "S_OK")
     
-    return Types.Result(False, "NO SPECIFIC ERROR, HRESULT: {}".format(hr))
+    return Types.Result(False, "NO SPECIFIC ERROR, HRESULT: {}".format(hex(hr&0xFFFFFFFF)))
