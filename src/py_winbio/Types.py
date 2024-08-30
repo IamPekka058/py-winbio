@@ -40,7 +40,15 @@ class WINBIO_UNIT_SCHEMA(ctypes.Structure):
 class WINBIO_IDENTITY(ctypes.Structure):
     _fields_ = [("Type", ctypes.c_uint32),
                 ("Value", Value)]
-    
+
+# TODO - Finish the structure https://learn.microsoft.com/en-us/windows/win32/api/winbio/ne-winbio-winbio_async_notification_method
+#class WINBIO_ASYNC_NOTIFY_CALLBACK(ctypes.Structure):
+#    _fields_ = [("WINBIO_ASYNC_NOTIFY_NONE", 0),
+#                ("WINBIO_ASYNC_NOTIFY_CALLBACK", )]
+
+# TODO - Finish the structure https://learn.microsoft.com/en-US/windows/win32/api/winbio/ns-winbio-winbio_async_result
+#class ASYNC_RESULT(ctypes.Structure):
+
 class Result():
     def __init__(self, state, response):
         self.state = state
