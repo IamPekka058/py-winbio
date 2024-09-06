@@ -138,6 +138,16 @@ class WinBioAuthenticator():
             return job
         return job
 
+    def closeSession(self):
+        ret = self.lib.WinBioCloseSession(self.session_handle)
+        job = RESULT(ret)
+        if not job.state:
+            print("Failed to close session, HRESULT: ", job.response)
+            return job
+        print("Successfully closed session, HRESULT: ", job.response)
+        return job
+
+
 # Following methods need local system permissions on windows
 # Currently deactivated
 #    def acquireFocus(self):
