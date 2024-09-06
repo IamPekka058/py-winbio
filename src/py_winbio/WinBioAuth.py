@@ -38,13 +38,15 @@ class WinBioAuthenticator():
     def locateSensor(self):
         unit_id = ctypes.pointer(wintypes.ULONG())
 
+        print("Session handle: {}".format(self.session_handle.contents))
+
         ret = self.lib.WinBioLocateSensor(self.session_handle, unit_id)
 
         job = RESULT(ret)
         if not job.state:
             print("Failed to locate sensor, HRESULT: ", job.response)
             return job
-        print("Successfully located sensor.")
+        print("Successfully located sensor., HRESULT: ", job.response)
         job.response = unit_id
         return job
 # TODO - Wait until async operations are supported
@@ -134,18 +136,6 @@ class WinBioAuthenticator():
         job = RESULT(ret)
         if not job.state:
             return job
-        return job
-
-    def locateSensor(self):
-        unit_id_ptr = ctypes.pointer(ctypes.c_ulong())
-        ret = self.lib.WinBioLocateSensor(self.session_handle_ptr, unit_id_ptr)
-
-        job = RESULT(ret)
-        if not job.state:
-            print("Failed to locate sensor, HRESULT: ", job.response)
-            return job
-        job.response = unit_id_ptr.contents
-        print("Successfully located sensor., HRESULT: ", job.response)
         return job
 
 # Following methods need local system permissions on windows
