@@ -38,7 +38,7 @@ class WinBioAuthenticator():
     def locateSensor(self):
         unit_id = ctypes.pointer(wintypes.ULONG())
 
-        print("Session handle: {}".format(self.session_handle.contents))
+        print("Session handle: {}".format(self.session_handle))
 
         ret = self.lib.WinBioLocateSensor(self.session_handle, unit_id)
 
