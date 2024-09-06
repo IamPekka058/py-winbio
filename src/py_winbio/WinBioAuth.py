@@ -15,9 +15,6 @@ class WinBioAuthenticator():
         if not openSession:
             pass
 
-        #Open session
-        self.openSession()
-
     def openSession(self, WINBIO_TYPE = Enum.WINBIO_TYPE.FINGERPRINT, WINBIO_POOL = Enum.WINBIO_POOL.SYSTEM, WINBIO_FLAG = Enum.WINBIO_FLAG.DEFAULT):
         ret = self.lib.WinBioOpenSession(WINBIO_TYPE, WINBIO_POOL, WINBIO_FLAG, ctypes.c_void_p(None), 0, Enum.WINBIO_DB.DEFAULT, ctypes.byref(self.session_handle))
 
@@ -29,7 +26,15 @@ class WinBioAuthenticator():
             return job
         print("Successfully opened session, HRESULT: ", job.response)
         return job
-    
+
+# TODO - Implement the following method https://learn.microsoft.com/en-us/windows/win32/api/winbio/nf-winbio-winbioasyncopensession
+#        def openAsyncSession(self, WINBIO_TYPE = Enum.WINBIO_TYPE.FINGERPRINT, WINBIO_POOL = Enum.WINBIO_POOL.SYSTEM, WINBIO_FLAG = Enum.WINBIO_FLAG.DEFAULT):
+
+
+# TODO - Implement the following method https://learn.microsoft.com/en-us/windows/win32/api/winbio/nc-winbio-pwinbio_async_completion_callback
+#    def asyncCallbackMethod():
+#        pass
+
     def locateSensor(self):
         unit_id = ctypes.pointer(wintypes.ULONG())
 
@@ -42,6 +47,16 @@ class WinBioAuthenticator():
         print("Successfully located sensor.")
         job.response = unit_id
         return job
+# TODO - Wait until async operations are supported
+#    def monitorPresence(self, unit_id):
+#        ret = self.lib.WinBioMonitorPresence(self.session_handle, unit_id)
+#
+#        job = RESULT(ret)
+#        if not job.state:
+#            print("Failed to monitor presence, HRESULT: ", job.response)
+#            return job
+#        print("Successfully monitored presence.")
+#        return job
 
     def identify(self, subtype = Enum.WINBIO_FINGER_UNSPECIFIED.POS_01):
         unitid_ptr = ctypes.pointer(ctypes.c_ulong())
@@ -56,7 +71,9 @@ class WinBioAuthenticator():
         job = RESULT(ret)
         print("IDENTIFY -> {}".format(job))
         if not job.state:
+            print("Failed to identify, HRESULT: ", job.response)
             return job
+        print("Successfully identified, HRESULT: ", job.response)
         job.response = identity_ptr[0]
         self.free(ctypes.addressof(identity_ptr))
         return job
