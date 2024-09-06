@@ -5,17 +5,17 @@ from ctypes import wintypes
 SECURITY_MAX_SID_SIZE = 68
 
 class GUID(ctypes.Structure):
-    _fields_ = [("Data1", ctypes.c_ulong),
-                ("Data2", ctypes.c_short),
-                ("Data3", ctypes.c_short),
-                ("Data4", ctypes.c_char * 8)]
+    _fields_ = [("Data1", wintypes.DWORD),
+                ("Data2", wintypes.WORD),
+                ("Data3", wintypes.WORD),
+                ("Data4", wintypes.BYTE * 8)]
 
 class AccountSid(ctypes.Structure):
-    _fields_ = [("Size", ctypes.c_ulong),
-                ("Data", (ctypes.c_char * SECURITY_MAX_SID_SIZE))]
+    _fields_ = [("Size", wintypes.ULONG),
+                ("Data", (ctypes.c_ubyte * SECURITY_MAX_SID_SIZE))]
 
 class Value(ctypes.Structure):
-    _fields_ = [("Null", ctypes.c_ulong),
+    _fields_ = [("Null", wintypes.ULONG),
                 ("Wildcard", ctypes.c_ulong),
                 ("TemplateGuid", GUID),
                 ("AccountSid", AccountSid)]

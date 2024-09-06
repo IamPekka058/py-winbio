@@ -118,6 +118,19 @@ class WinBioAuthenticator():
         if not job.state:
             return job
         return job
+
+    def locateSensor(self):
+        unit_id_ptr = ctypes.pointer(ctypes.c_ulong())
+        ret = self.lib.WinBioLocateSensor(self.session_handle_ptr, unit_id_ptr)
+
+        job = RESULT(ret)
+        if not job.state:
+            print("Failed to locate sensor, HRESULT: ", job.response)
+            return job
+        job.response = unit_id_ptr.contents
+        print("Successfully located sensor., HRESULT: ", job.response)
+        return job
+
 # Following methods need local system permissions on windows
 # Currently deactivated
 #    def acquireFocus(self):
