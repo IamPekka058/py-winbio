@@ -1,5 +1,7 @@
 # py-winbio
- 
+
+> ⚠️ This python package does not work yet. Feel free to contribute.
+
 Python wrapper for the WINBIO API of Windows. You can use py-winbio for biometric authentications supported by Windows.
  
 ### IMPORTANT NOTE
