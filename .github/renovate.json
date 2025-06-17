@@ -26,7 +26,7 @@
       ],
       "commitMessagePrefix": "⬇️",
       "commitMessageAction": "Downgrade"
-    },
+    }
   ],
   "dependencyDashboardTitle": "📌 Dependency Dashboard",
   "dependencyDashboardLabels": [
