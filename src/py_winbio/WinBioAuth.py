@@ -127,62 +127,42 @@ class WinBioAuthenticator():
         unit_count = ctypes.c_size_t()
 
         ret = self.lib.WinBioEnumBiometricUnits(bio_type, ctypes.byref(schema_array), ctypes.byref(unit_count))
-        print(f"[DEBUG] HRESULT from WinBioEnumBiometricUnits: {hex(ret)}")
 
         job = RESULT(ret)
         if not job.state:
             print(f"Failed to enumerate Biometric Units, HRESULT: {job.response}")
             return job
 
-        print(f"[DEBUG] unit_count: {unit_count.value}")
         py_units = []
         for i in range(unit_count.value):
-            print(f"[DEBUG] --- Processing unit {i} ---")
             unit_schema = schema_array[i]
-            
-            # We need to copy the data from the c_char_p before freeing the memory
-            print(f"[DEBUG] Reading UnitId: {unit_schema.UnitId}")
-            py_unit = {'UnitId': unit_schema.UnitId}
-
-            print(f"[DEBUG] Reading PoolType: {unit_schema.PoolType}")
-            py_unit['PoolType'] = unit_schema.PoolType
-
-            print(f"[DEBUG] Reading BiometricFactor: {unit_schema.BiometricFactor}")
-            py_unit['BiometricFactor'] = unit_schema.BiometricFactor
-
-            print(f"[DEBUG] Reading SensorSubType: {unit_schema.SensorSubType}")
-            py_unit['SensorSubType'] = unit_schema.SensorSubType
-
-            print(f"[DEBUG] Reading Capabilities: {unit_schema.Capabilities}")
-            py_unit['Capabilities'] = unit_schema.Capabilities
-
-            print(f"[DEBUG] Reading DeviceInstanceId pointer: {unit_schema.DeviceInstanceId}")
-            py_unit['DeviceInstanceId'] = unit_schema.DeviceInstanceId.decode('utf-8') if unit_schema.DeviceInstanceId else ''
-            
-            print(f"[DEBUG] Reading Description pointer: {unit_schema.Description}")
-            py_unit['Description'] = unit_schema.Description.decode('utf-8') if unit_schema.Description else ''
-
-            print(f"[DEBUG] Reading Manufacturer pointer: {unit_schema.Manufacturer}")
-            py_unit['Manufacturer'] = unit_schema.Manufacturer.decode('utf-8') if unit_schema.Manufacturer else ''
-
-            print(f"[DEBUG] Reading Model pointer: {unit_schema.Model}")
-            py_unit['Model'] = unit_schema.Model.decode('utf-8') if unit_schema.Model else ''
-
-            print(f"[DEBUG] Reading SerialNumber pointer: {unit_schema.SerialNumber}")
-            py_unit['SerialNumber'] = unit_schema.SerialNumber.decode('utf-8') if unit_schema.SerialNumber else ''
-
-            print(f"[DEBUG] Reading FirmwareVersion")
-            py_unit['FirmwareVersion'] = {
+            try:
+                py_unit = {}
+                py_unit['UnitId'] = unit_schema.UnitId
+                py_unit['PoolType'] = unit_schema.PoolType
+                py_unit['BiometricFactor'] = unit_schema.BiometricFactor
+                py_unit['SensorSubType'] = unit_schema.SensorSubType
+                py_unit['Capabilities'] = unit_schema.Capabilities
+                
+                # These string pointers can be invalid and cause a crash.
+                py_unit['DeviceInstanceId'] = unit_schema.DeviceInstanceId.decode('utf-8') if unit_schema.DeviceInstanceId else ''
+                py_unit['Description'] = unit_schema.Description.decode('utf-8') if unit_schema.Description else ''
+                py_unit['Manufacturer'] = unit_schema.Manufacturer.decode('utf-8') if unit_schema.Manufacturer else ''
+                py_unit['Model'] = unit_schema.Model.decode('utf-8') if unit_schema.Model else ''
+                py_unit['SerialNumber'] = unit_schema.SerialNumber.decode('utf-8') if unit_schema.SerialNumber else ''
+                
+                py_unit['FirmwareVersion'] = {
                     'MajorVersion': unit_schema.FirmwareVersion.MajorVersion,
                     'MinorVersion': unit_schema.FirmwareVersion.MinorVersion
                 }
-            
-            print(f"[DEBUG] --- Finished unit {i} ---")
-            py_units.append(py_unit)
+                py_units.append(py_unit)
+            except Exception as e:
+                print(f"[ERROR] Failed to process biometric unit #{i}. Error: {e}")
+                continue
 
         self.free(schema_array)
 
-        print(f"Successfully enumerated {unit_count.value} Biometric Units, HRESULT: {job.response}")
+        print(f"Successfully enumerated {len(py_units)} Biometric Units, HRESULT: {job.response}")
         job.response = py_units
         return job
 
