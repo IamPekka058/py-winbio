@@ -1,8 +1,13 @@
 import ctypes
-from ctypes import wintypes
+from ctypes import wintypes, POINTER
 
 #Maximum size of SID according to the docs
 SECURITY_MAX_SID_SIZE = 68
+
+WINBIO_SESSION_HANDLE = wintypes.HANDLE
+WINBIO_UNIT_ID = ctypes.c_ulong
+WINBIO_REJECT_DETAIL = ctypes.c_ulong
+WINBIO_BIOMETRIC_SUBTYPE = ctypes.c_ubyte
 
 class GUID(ctypes.Structure):
     _fields_ = [("Data1", wintypes.DWORD),
@@ -14,7 +19,7 @@ class AccountSid(ctypes.Structure):
     _fields_ = [("Size", wintypes.ULONG),
                 ("Data", (ctypes.c_ubyte * SECURITY_MAX_SID_SIZE))]
 
-class Value(ctypes.Structure):
+class Value(ctypes.Union):
     _fields_ = [("Null", wintypes.ULONG),
                 ("Wildcard", ctypes.c_ulong),
                 ("TemplateGuid", GUID),
@@ -59,3 +64,9 @@ class Result():
     
     def getResponse(self):
         return self.response
+
+PWINBIO_UNIT_SCHEMA = POINTER(WINBIO_UNIT_SCHEMA)
+PWINBIO_IDENTITY = POINTER(WINBIO_IDENTITY)
+PWINBIO_UNIT_ID = POINTER(WINBIO_UNIT_ID)
+PWINBIO_REJECT_DETAIL = POINTER(WINBIO_REJECT_DETAIL)
+PWINBIO_BIOMETRIC_SUBTYPE = POINTER(WINBIO_BIOMETRIC_SUBTYPE)
