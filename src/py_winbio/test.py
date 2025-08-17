@@ -20,14 +20,13 @@ def run_test():
     if len(units) > 0:
         # Print unit information
         for unit in units:
-            print(f"  Unit ID: {unit.UnitId}")
-            # Use .value to get string from c_char_p
-            if unit.Description:
-                print(f"  Description: {unit.Description.decode('utf-8')}")
-            if unit.Manufacturer:
-                print(f"  Manufacturer: {unit.Manufacturer.decode('utf-8')}")
-            if unit.Model:
-                print(f"  Model: {unit.Model.decode('utf-8')}")
+            print(f"  Unit ID: {unit['UnitId']}")
+            if unit['Description']:
+                print(f"  Description: {unit['Description']}")
+            if unit['Manufacturer']:
+                print(f"  Manufacturer: {unit['Manufacturer']}")
+            if unit['Model']:
+                print(f"  Model: {unit['Model']}")
 
         # Try to identify
         print("\nAttempting to identify...")

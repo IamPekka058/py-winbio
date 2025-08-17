@@ -127,18 +127,39 @@ class WinBioAuthenticator():
         unit_count = ctypes.c_size_t()
 
         ret = self.lib.WinBioEnumBiometricUnits(bio_type, ctypes.byref(schema_array), ctypes.byref(unit_count))
-        
+
         job = RESULT(ret)
         if not job.state:
             print(f"Failed to enumerate Biometric Units, HRESULT: {job.response}")
             return job
 
-        units = [schema_array[i] for i in range(unit_count.value)]
-        
+        py_units = []
+        for i in range(unit_count.value):
+            unit_schema = schema_array[i]
+            
+            # We need to copy the data from the c_char_p before freeing the memory
+            py_unit = {
+                'UnitId': unit_schema.UnitId,
+                'PoolType': unit_schema.PoolType,
+                'BiometricFactor': unit_schema.BiometricFactor,
+                'SensorSubType': unit_schema.SensorSubType,
+                'Capabilities': unit_schema.Capabilities,
+                'DeviceInstanceId': unit_schema.DeviceInstanceId.decode('utf-8') if unit_schema.DeviceInstanceId else '',
+                'Description': unit_schema.Description.decode('utf-8') if unit_schema.Description else '',
+                'Manufacturer': unit_schema.Manufacturer.decode('utf-8') if unit_schema.Manufacturer else '',
+                'Model': unit_schema.Model.decode('utf-8') if unit_schema.Model else '',
+                'SerialNumber': unit_schema.SerialNumber.decode('utf-8') if unit_schema.SerialNumber else '',
+                'FirmwareVersion': {
+                    'MajorVersion': unit_schema.FirmwareVersion.MajorVersion,
+                    'MinorVersion': unit_schema.FirmwareVersion.MinorVersion
+                }
+            }
+            py_units.append(py_unit)
+
         self.free(schema_array)
 
         print(f"Successfully enumerated {unit_count.value} Biometric Units, HRESULT: {job.response}")
-        job.response = units
+        job.response = py_units
         return job
 
     def cancel(self):
