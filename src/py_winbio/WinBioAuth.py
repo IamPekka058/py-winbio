@@ -1,6 +1,6 @@
 import ctypes
 from ctypes import wintypes, POINTER
-from . import Enum, Types
+from . import constants, Types
 from .Helper import RESULT
 
 class WinBioAuthenticator():
@@ -59,7 +59,7 @@ class WinBioAuthenticator():
         self.lib.WinBioCancel.argtypes = [Types.WINBIO_SESSION_HANDLE]
         self.lib.WinBioCancel.restype = ctypes.HRESULT
 
-    def openSession(self, bio_type=Enum.WINBIO_TYPE.FINGERPRINT, pool=Enum.WINBIO_POOL.SYSTEM, flag=Enum.WINBIO_FLAG.DEFAULT, db=Enum.WINBIO_DB.DEFAULT):
+    def openSession(self, bio_type=constants.WINBIO_TYPE.FINGERPRINT, pool=constants.WINBIO_POOL.SYSTEM, flag=constants.WINBIO_FLAG.DEFAULT, db=constants.WINBIO_DB.DEFAULT):
         ret = self.lib.WinBioOpenSession(bio_type, pool, flag, None, 0, db, ctypes.byref(self.session_handle))
         job = RESULT(ret)
         if not job.state:
@@ -100,7 +100,7 @@ class WinBioAuthenticator():
             job.response = identity
         return job
 
-    def verify(self, identity, subtype=Enum.WINBIO_FINGER_UNSPECIFIED.POS_01):
+    def verify(self, identity, subtype=constants.WINBIO_FINGER_UNSPECIFIED.POS_01):
         unit_id = Types.WINBIO_UNIT_ID()
         match = wintypes.BOOL()
         reject_detail = Types.WINBIO_REJECT_DETAIL()
@@ -122,7 +122,7 @@ class WinBioAuthenticator():
             job.response = bool(match.value)
         return job
 
-    def enumerateBiometricUnits(self, bio_type=Enum.WINBIO_TYPE.FINGERPRINT):
+    def enumerateBiometricUnits(self, bio_type=constants.WINBIO_TYPE.FINGERPRINT):
         schema_array = POINTER(Types.WINBIO_UNIT_SCHEMA)()
         unit_count = ctypes.c_size_t()
 
