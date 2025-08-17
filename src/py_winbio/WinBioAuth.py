@@ -134,27 +134,50 @@ class WinBioAuthenticator():
             print(f"Failed to enumerate Biometric Units, HRESULT: {job.response}")
             return job
 
+        print(f"[DEBUG] unit_count: {unit_count.value}")
         py_units = []
         for i in range(unit_count.value):
+            print(f"[DEBUG] --- Processing unit {i} ---")
             unit_schema = schema_array[i]
             
             # We need to copy the data from the c_char_p before freeing the memory
-            py_unit = {
-                'UnitId': unit_schema.UnitId,
-                'PoolType': unit_schema.PoolType,
-                'BiometricFactor': unit_schema.BiometricFactor,
-                'SensorSubType': unit_schema.SensorSubType,
-                'Capabilities': unit_schema.Capabilities,
-                'DeviceInstanceId': unit_schema.DeviceInstanceId.decode('utf-8') if unit_schema.DeviceInstanceId else '',
-                'Description': unit_schema.Description.decode('utf-8') if unit_schema.Description else '',
-                'Manufacturer': unit_schema.Manufacturer.decode('utf-8') if unit_schema.Manufacturer else '',
-                'Model': unit_schema.Model.decode('utf-8') if unit_schema.Model else '',
-                'SerialNumber': unit_schema.SerialNumber.decode('utf-8') if unit_schema.SerialNumber else '',
-                'FirmwareVersion': {
+            print(f"[DEBUG] Reading UnitId: {unit_schema.UnitId}")
+            py_unit = {'UnitId': unit_schema.UnitId}
+
+            print(f"[DEBUG] Reading PoolType: {unit_schema.PoolType}")
+            py_unit['PoolType'] = unit_schema.PoolType
+
+            print(f"[DEBUG] Reading BiometricFactor: {unit_schema.BiometricFactor}")
+            py_unit['BiometricFactor'] = unit_schema.BiometricFactor
+
+            print(f"[DEBUG] Reading SensorSubType: {unit_schema.SensorSubType}")
+            py_unit['SensorSubType'] = unit_schema.SensorSubType
+
+            print(f"[DEBUG] Reading Capabilities: {unit_schema.Capabilities}")
+            py_unit['Capabilities'] = unit_schema.Capabilities
+
+            print(f"[DEBUG] Reading DeviceInstanceId pointer: {unit_schema.DeviceInstanceId}")
+            py_unit['DeviceInstanceId'] = unit_schema.DeviceInstanceId.decode('utf-8') if unit_schema.DeviceInstanceId else ''
+            
+            print(f"[DEBUG] Reading Description pointer: {unit_schema.Description}")
+            py_unit['Description'] = unit_schema.Description.decode('utf-8') if unit_schema.Description else ''
+
+            print(f"[DEBUG] Reading Manufacturer pointer: {unit_schema.Manufacturer}")
+            py_unit['Manufacturer'] = unit_schema.Manufacturer.decode('utf-8') if unit_schema.Manufacturer else ''
+
+            print(f"[DEBUG] Reading Model pointer: {unit_schema.Model}")
+            py_unit['Model'] = unit_schema.Model.decode('utf-8') if unit_schema.Model else ''
+
+            print(f"[DEBUG] Reading SerialNumber pointer: {unit_schema.SerialNumber}")
+            py_unit['SerialNumber'] = unit_schema.SerialNumber.decode('utf-8') if unit_schema.SerialNumber else ''
+
+            print(f"[DEBUG] Reading FirmwareVersion")
+            py_unit['FirmwareVersion'] = {
                     'MajorVersion': unit_schema.FirmwareVersion.MajorVersion,
                     'MinorVersion': unit_schema.FirmwareVersion.MinorVersion
                 }
-            }
+            
+            print(f"[DEBUG] --- Finished unit {i} ---")
             py_units.append(py_unit)
 
         self.free(schema_array)
