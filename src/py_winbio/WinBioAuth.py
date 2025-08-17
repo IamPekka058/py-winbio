@@ -127,6 +127,7 @@ class WinBioAuthenticator():
         unit_count = ctypes.c_size_t()
 
         ret = self.lib.WinBioEnumBiometricUnits(bio_type, ctypes.byref(schema_array), ctypes.byref(unit_count))
+        print(f"[DEBUG] HRESULT from WinBioEnumBiometricUnits: {hex(ret)}")
 
         job = RESULT(ret)
         if not job.state:
