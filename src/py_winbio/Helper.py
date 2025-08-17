@@ -1,5 +1,5 @@
 import ctypes
-import constants, Types
+from . import constants, Types
 
 def convert(hresult):
     return ctypes.c_int32(hresult).value
