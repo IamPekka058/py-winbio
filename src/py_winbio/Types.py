@@ -30,11 +30,11 @@ class WINBIO_VERSION(ctypes.Structure):
                 ("MinorVersion", wintypes.DWORD)]
 
 class WINBIO_UNIT_SCHEMA(ctypes.Structure):
-    _fields_ = [("UnitId", ctypes.c_int32),
+    _fields_ = [("UnitId", ctypes.c_ulong),
                 ("PoolType", ctypes.c_ulong),
                 ("BiometricFactor", ctypes.c_ulong),
-                ("SensorSubType", ctypes.c_long),
-                ("Capabilities", ctypes.c_long),
+                ("SensorSubType", ctypes.c_ubyte),
+                ("Capabilities", ctypes.c_ulong),
                 ("DeviceInstanceId", ctypes.c_wchar_p),
                 ("Description", ctypes.c_wchar_p),
                 ("Manufacturer", ctypes.c_wchar_p),
