@@ -27,7 +27,7 @@ class WinBioAuthenticator():
         self.lib.WinBioEnumBiometricUnits.argtypes = [
             wintypes.ULONG,
             POINTER(POINTER(Types.WINBIO_UNIT_SCHEMA)),
-            POINTER(ctypes.c_size_t)
+            POINTER(wintypes.ULONG)
         ]
         self.lib.WinBioEnumBiometricUnits.restype = ctypes.HRESULT
 
@@ -124,7 +124,7 @@ class WinBioAuthenticator():
 
     def enumerateBiometricUnits(self, bio_type=constants.WINBIO_TYPE.FINGERPRINT):
         schema_array = POINTER(Types.WINBIO_UNIT_SCHEMA)()
-        unit_count = ctypes.c_size_t()
+        unit_count = wintypes.ULONG()
 
         ret = self.lib.WinBioEnumBiometricUnits(bio_type, ctypes.byref(schema_array), ctypes.byref(unit_count))
 
