@@ -35,11 +35,11 @@ class WINBIO_UNIT_SCHEMA(ctypes.Structure):
                 ("BiometricFactor", ctypes.c_ulong),
                 ("SensorSubType", ctypes.c_long),
                 ("Capabilities", ctypes.c_long),
-                ("DeviceInstanceId", ctypes.c_char_p),
-                ("Description", ctypes.c_char_p),
-                ("Manufacturer", ctypes.c_char_p),
-                ("Model", ctypes.c_char_p),
-                ("SerialNumber", ctypes.c_char_p),
+                ("DeviceInstanceId", ctypes.c_wchar_p),
+                ("Description", ctypes.c_wchar_p),
+                ("Manufacturer", ctypes.c_wchar_p),
+                ("Model", ctypes.c_wchar_p),
+                ("SerialNumber", ctypes.c_wchar_p),
                 ("FirmwareVersion", WINBIO_VERSION)]
 
 class WINBIO_IDENTITY(ctypes.Structure):

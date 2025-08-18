@@ -157,19 +157,19 @@ class WinBioAuthenticator():
                 py_unit['Capabilities'] = unit_schema.Capabilities
 
                 print(f"[DEBUG] Reading DeviceInstanceId pointer: {unit_schema.DeviceInstanceId}")
-                py_unit['DeviceInstanceId'] = unit_schema.DeviceInstanceId.decode('utf-8') if unit_schema.DeviceInstanceId else ''
+                py_unit['DeviceInstanceId'] = unit_schema.DeviceInstanceId if unit_schema.DeviceInstanceId else ''
                 
                 print(f"[DEBUG] Reading Description pointer: {unit_schema.Description}")
-                py_unit['Description'] = unit_schema.Description.decode('utf-8') if unit_schema.Description else ''
+                py_unit['Description'] = unit_schema.Description if unit_schema.Description else ''
 
                 print(f"[DEBUG] Reading Manufacturer pointer: {unit_schema.Manufacturer}")
-                py_unit['Manufacturer'] = unit_schema.Manufacturer.decode('utf-8') if unit_schema.Manufacturer else ''
+                py_unit['Manufacturer'] = unit_schema.Manufacturer if unit_schema.Manufacturer else ''
 
                 print(f"[DEBUG] Reading Model pointer: {unit_schema.Model}")
-                py_unit['Model'] = unit_schema.Model.decode('utf-8') if unit_schema.Model else ''
+                py_unit['Model'] = unit_schema.Model if unit_schema.Model else ''
 
                 print(f"[DEBUG] Reading SerialNumber pointer: {unit_schema.SerialNumber}")
-                py_unit['SerialNumber'] = unit_schema.SerialNumber.decode('utf-8') if unit_schema.SerialNumber else ''
+                py_unit['SerialNumber'] = unit_schema.SerialNumber if unit_schema.SerialNumber else ''
 
                 print(f"[DEBUG] Reading FirmwareVersion")
                 py_unit['FirmwareVersion'] = {
